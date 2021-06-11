@@ -57,6 +57,8 @@ public class AuthApplication implements CommandLineRunner {
 			List<Authority> authorities = Arrays.asList(new Authority[] { authorityAdmin, authorityUser });
 
 			user = new User();
+			user.setFirstName("admin");
+			user.setLastName("admin");
 			user.setAuthorities(authorities);
 			user.setEnabled(true);
 			user.setUsername("admin");
@@ -75,6 +77,8 @@ public class AuthApplication implements CommandLineRunner {
 			List<Authority> authorities = Arrays.asList(new Authority[] { authorityUser });
 
 			commonUser = new User();
+			commonUser.setFirstName("user");
+			commonUser.setLastName("user");
 			commonUser.setAuthorities(authorities);
 			commonUser.setEnabled(true);
 			commonUser.setUsername("commonUser");

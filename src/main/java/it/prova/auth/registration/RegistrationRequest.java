@@ -1,16 +1,35 @@
 package it.prova.auth.registration;
 
 public class RegistrationRequest {
-
+	private String firstName;
+	private String lastName;
 	private String email;
 	private String username;
 	private String password;
 
-	public RegistrationRequest(String email, String username, String password) {
+	public RegistrationRequest(String firstName, String lastName, String email, String username, String password) {
 		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
 		this.email = email;
 		this.username = username;
 		this.password = password;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	public RegistrationRequest() {
