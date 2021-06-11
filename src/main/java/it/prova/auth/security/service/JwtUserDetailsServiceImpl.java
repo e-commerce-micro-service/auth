@@ -6,13 +6,16 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import it.prova.auth.mail.EmailRequest;
 import it.prova.auth.model.Authority;
 import it.prova.auth.model.AuthorityName;
 import it.prova.auth.model.Token;
@@ -55,6 +58,10 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
 		user.setAuthorities(authorities);
 
 		userRepository.save(user);
+		
+		//TODO testare se funziona l'invio dell'email
+//		sendEmail(user);
+		
 		String token = UUID.randomUUID().toString();
 
 		Token confermationToken = new Token(token, LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), user);
@@ -62,5 +69,14 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
 		tokenService.saveToken(confermationToken);
 
 		return confermationToken;
+	}
+
+	public String sendEmail(User user) {
+		String emailResourceUrl = "http://localhost/notify/api/sendmailconfirmregistration";
+		RestTemplate restTemplate = new RestTemplate();
+		HttpEntity<EmailRequest> request = new HttpEntity<>(
+				new EmailRequest(user.getFirstName(), user.getLastName(), user.getEmail()));
+		return restTemplate.postForObject(emailResourceUrl, request, String.class);
+
 	}
 }
