@@ -2,6 +2,7 @@ package it.prova.auth.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +12,7 @@ import it.prova.auth.model.Token;
 import it.prova.auth.registration.RegistrationRequest;
 import it.prova.auth.service.RegistrationService;
 
+@CrossOrigin
 @RestController
 @RequestMapping(value = "/api/registration", produces = { MediaType.APPLICATION_JSON_VALUE })
 public class RegistrationController {

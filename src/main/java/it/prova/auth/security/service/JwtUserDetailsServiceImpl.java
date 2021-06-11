@@ -60,7 +60,7 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
 		userRepository.save(user);
 		
 		//TODO testare se funziona l'invio dell'email
-//		sendEmail(user);
+		sendEmail(user);
 		
 		String token = UUID.randomUUID().toString();
 
@@ -72,7 +72,7 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
 	}
 
 	public String sendEmail(User user) {
-		String emailResourceUrl = "http://localhost/notify/api/sendmailconfirmregistration";
+		String emailResourceUrl = "http://localhost:8081/api/sendmailconfirmregistration";
 		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<EmailRequest> request = new HttpEntity<>(
 				new EmailRequest(user.getFirstName(), user.getLastName(), user.getEmail()));
