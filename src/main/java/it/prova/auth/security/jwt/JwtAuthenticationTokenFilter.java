@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import it.prova.auth.security.service.JwtUserDetailsServiceImpl;
+import it.prova.auth.service.UserService;
 
 @Component
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
@@ -28,7 +28,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 	private JwtTokenUtil jwtUtils;
 	
 	@Autowired
-	private JwtUserDetailsServiceImpl userDetailsService;
+	private UserService userDetailsService;
 
 	@Value("${jwt.header}")
 	private String tokenHeader;

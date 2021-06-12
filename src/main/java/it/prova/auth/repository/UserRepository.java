@@ -1,4 +1,4 @@
-package it.prova.auth.security.repository;
+package it.prova.auth.repository;
 
 import java.util.Optional;
 

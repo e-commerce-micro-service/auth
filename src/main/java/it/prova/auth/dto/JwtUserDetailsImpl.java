@@ -1,4 +1,4 @@
-package it.prova.auth.security.jwt.dto;
+package it.prova.auth.dto;
 
 import java.util.Collection;
 import java.util.List;

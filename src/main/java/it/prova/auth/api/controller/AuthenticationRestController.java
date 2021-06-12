@@ -1,4 +1,4 @@
-package it.prova.auth.security.controller;
+package it.prova.auth.api.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.prova.auth.dto.JwtUserDetailsImpl;
 import it.prova.auth.security.jwt.JwtAuthenticationRequest;
 import it.prova.auth.security.jwt.JwtAuthenticationResponse;
 import it.prova.auth.security.jwt.JwtTokenUtil;
-import it.prova.auth.security.jwt.dto.JwtUserDetailsImpl;
 
 @RestController
 public class AuthenticationRestController {

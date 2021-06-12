@@ -14,7 +14,8 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
-import it.prova.auth.security.jwt.dto.JwtUserDetailsImpl;
+import it.prova.auth.dto.JwtUserDetailsImpl;
+import it.prova.auth.model.User;
 
 @Component
 public class JwtTokenUtil {
@@ -33,6 +34,16 @@ public class JwtTokenUtil {
 
 		return Jwts.builder()
 				.setSubject((userPrincipal.getUsername()))
+				.setIssuedAt(new Date())
+				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+				.signWith(SignatureAlgorithm.HS512, jwtSecret)
+				.compact();
+	}
+	
+	public String generateJwtToken(User user) {
+
+		return Jwts.builder()
+				.setSubject((user.getUsername()))
 				.setIssuedAt(new Date())
 				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
 				.signWith(SignatureAlgorithm.HS512, jwtSecret)

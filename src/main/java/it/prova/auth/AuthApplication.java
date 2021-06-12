@@ -13,8 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import it.prova.auth.model.Authority;
 import it.prova.auth.model.AuthorityName;
 import it.prova.auth.model.User;
-import it.prova.auth.security.repository.AuthorityRepository;
-import it.prova.auth.security.repository.UserRepository;
+import it.prova.auth.repository.AuthorityRepository;
+import it.prova.auth.repository.UserRepository;
 
 @SpringBootApplication
 public class AuthApplication implements CommandLineRunner {

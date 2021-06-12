@@ -1,9 +1,8 @@
-package it.prova.auth.security.service;
+package it.prova.auth.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -15,18 +14,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import it.prova.auth.dto.JwtUserDetailsImpl;
+import it.prova.auth.exception.UserException;
 import it.prova.auth.mail.EmailRequest;
 import it.prova.auth.model.Authority;
 import it.prova.auth.model.AuthorityName;
 import it.prova.auth.model.Token;
 import it.prova.auth.model.User;
-import it.prova.auth.security.jwt.dto.JwtUserDetailsImpl;
-import it.prova.auth.security.repository.AuthorityRepository;
-import it.prova.auth.security.repository.UserRepository;
-import it.prova.auth.service.TokenService;
+import it.prova.auth.repository.AuthorityRepository;
+import it.prova.auth.repository.UserRepository;
+import it.prova.auth.security.jwt.JwtTokenUtil;
 
 @Service
-public class JwtUserDetailsServiceImpl implements UserDetailsService {
+public class UserService implements UserDetailsService {
 
 	@Autowired
 	private UserRepository userRepository;
@@ -34,6 +34,10 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
 	private TokenService tokenService;
 	@Autowired
 	private AuthorityRepository authorityRepository;
+	@Autowired
+	JwtTokenUtil jwtTokenUtil;
+	@Autowired
+	RestTemplate restTemplate;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -47,33 +51,32 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
 		boolean userExists = userRepository.findByUsername(user.getUsername()).isPresent();
 
 		if (userExists) {
-			throw new IllegalStateException("username already taken");
+			throw new UserException("username already taken");
 		}
-		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-		List<Authority> authorities = new ArrayList<>();
-		authorities.add(authorityRepository.findByName(AuthorityName.ROLE_USER).orElse(null));
-		user.setAuthorities(authorities);
-
-		userRepository.save(user);
-		
-		//TODO testare se funziona l'invio dell'email
+		registerUser(user);
 		sendEmail(user);
-		
-		String token = UUID.randomUUID().toString();
 
-		Token confermationToken = new Token(token, LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), user);
-
+		Token confermationToken = new Token(jwtTokenUtil.generateJwtToken(user), LocalDateTime.now(),
+				LocalDateTime.now().plusMinutes(15), user);
 		tokenService.saveToken(confermationToken);
 
 		return confermationToken;
 	}
 
+	public void registerUser(User user) {
+		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		List<Authority> authorities = new ArrayList<>();
+		authorities.add(authorityRepository.findByName(AuthorityName.ROLE_USER).orElse(null));
+		user.setAuthorities(authorities);
+
+		userRepository.save(user);
+
+	}
+
 	public String sendEmail(User user) {
 		String emailResourceUrl = "http://localhost:8081/api/sendmailconfirmregistration";
-		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<EmailRequest> request = new HttpEntity<>(
 				new EmailRequest(user.getFirstName(), user.getLastName(), user.getEmail()));
 		return restTemplate.postForObject(emailResourceUrl, request, String.class);
