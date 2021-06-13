@@ -9,12 +9,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import it.prova.auth.dto.JwtUserDetailsImpl;
+import it.prova.auth.dto.UserDetailsImpl;
 import it.prova.auth.exception.UserException;
 import it.prova.auth.mail.EmailRequest;
 import it.prova.auth.model.Authority;
@@ -38,13 +37,15 @@ public class UserService implements UserDetailsService {
 	JwtTokenUtil jwtTokenUtil;
 	@Autowired
 	RestTemplate restTemplate;
+	@Autowired
+	PasswordEncoder passwordEncoder;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = userRepository.findByUsername(username)
 				.orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
 
-		return JwtUserDetailsImpl.build(user);
+		return UserDetailsImpl.build(user);
 	}
 
 	public Token signUpUser(User user) {
@@ -55,7 +56,7 @@ public class UserService implements UserDetailsService {
 		}
 
 		registerUser(user);
-		sendEmail(user);
+//		sendEmail(user);
 
 		Token confermationToken = new Token(jwtTokenUtil.generateJwtToken(user), LocalDateTime.now(),
 				LocalDateTime.now().plusMinutes(15), user);
@@ -65,8 +66,8 @@ public class UserService implements UserDetailsService {
 	}
 
 	public void registerUser(User user) {
-		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		
 		List<Authority> authorities = new ArrayList<>();
 		authorities.add(authorityRepository.findByName(AuthorityName.ROLE_USER).orElse(null));
 		user.setAuthorities(authorities);

@@ -7,14 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import it.prova.auth.model.Authority;
 import it.prova.auth.model.AuthorityName;
 import it.prova.auth.model.User;
 import it.prova.auth.repository.AuthorityRepository;
 import it.prova.auth.repository.UserRepository;
+import it.prova.auth.security.PasswordEncoder;
 
 @SpringBootApplication
 public class AuthApplication implements CommandLineRunner {
@@ -23,6 +22,8 @@ public class AuthApplication implements CommandLineRunner {
 	private UserRepository userRepository;
 	@Autowired
 	private AuthorityRepository authorityRepository;
+	@Autowired
+	PasswordEncoder bCryptPasswordEncoder;
 
 	public static void main(String[] args) {
 		SpringApplication.run(AuthApplication.class, args);
@@ -30,8 +31,8 @@ public class AuthApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		
+//		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
 		Authority authorityAdmin = authorityRepository.findByName(AuthorityName.ROLE_ADMIN).orElse(null);
 		if (authorityAdmin == null) {
 			authorityAdmin = new Authority(AuthorityName.ROLE_ADMIN);
@@ -63,7 +64,7 @@ public class AuthApplication implements CommandLineRunner {
 			user.setEnabled(true);
 			user.setUsername("admin");
 			user.setPassword("asd");
-			user.setPassword(passwordEncoder.encode("asd"));
+			user.setPassword(bCryptPasswordEncoder.bCryptPasswordEncoder().encode("asd"));
 			user.setEmail("admin@example.com");
 
 			user = userRepository.save(user);
@@ -82,7 +83,7 @@ public class AuthApplication implements CommandLineRunner {
 			commonUser.setAuthorities(authorities);
 			commonUser.setEnabled(true);
 			commonUser.setUsername("commonUser");
-			commonUser.setPassword(passwordEncoder.encode("asd"));
+			commonUser.setPassword(bCryptPasswordEncoder.bCryptPasswordEncoder().encode("asd"));
 			commonUser.setEmail("commonUser@example.com");
 
 			commonUser = userRepository.save(commonUser);

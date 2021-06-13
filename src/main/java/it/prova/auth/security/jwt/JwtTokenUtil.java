@@ -14,7 +14,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
-import it.prova.auth.dto.JwtUserDetailsImpl;
+import it.prova.auth.dto.UserDetailsImpl;
 import it.prova.auth.model.User;
 
 @Component
@@ -30,7 +30,7 @@ public class JwtTokenUtil {
 
 	public String generateJwtToken(Authentication authentication) {
 
-		JwtUserDetailsImpl userPrincipal = (JwtUserDetailsImpl) authentication.getPrincipal();
+		UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
 		return Jwts.builder()
 				.setSubject((userPrincipal.getUsername()))

@@ -27,12 +27,12 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "first_name", length = 50, unique = true)
+	@Column(name = "first_name")
 	@NotNull
 	@Size(min = 2)
 	private String firstName;
 
-	@Column(name = "last_name", length = 50, unique = true)
+	@Column(name = "last_name")
 	@NotNull
 	@Size(min = 2)
 	private String lastName;

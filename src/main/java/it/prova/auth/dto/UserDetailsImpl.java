@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import it.prova.auth.model.User;
 
-public class JwtUserDetailsImpl implements UserDetails {
+public class UserDetailsImpl implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
 	private final String username;
@@ -22,7 +22,7 @@ public class JwtUserDetailsImpl implements UserDetails {
 	private final Collection<? extends GrantedAuthority> authorities;
 	private final boolean enabled;
 
-	public JwtUserDetailsImpl(String username, String password, String email,
+	public UserDetailsImpl(String username, String password, String email,
 			Collection<? extends GrantedAuthority> authorities, boolean enabled) {
 		this.username = username;
 		this.password = password;
@@ -31,11 +31,11 @@ public class JwtUserDetailsImpl implements UserDetails {
 		this.enabled = enabled;
 	}
 
-	public static JwtUserDetailsImpl build(User user) {
+	public static UserDetailsImpl build(User user) {
 		List<GrantedAuthority> authorities = user.getAuthorities().stream()
 				.map(authority -> new SimpleGrantedAuthority(authority.getName().name())).collect(Collectors.toList());
 
-		return new JwtUserDetailsImpl(user.getUsername(), user.getPassword(), user.getEmail(), authorities,
+		return new UserDetailsImpl(user.getUsername(), user.getPassword(), user.getEmail(), authorities,
 				user.getEnabled());
 	}
 
@@ -88,7 +88,7 @@ public class JwtUserDetailsImpl implements UserDetails {
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
-		JwtUserDetailsImpl user = (JwtUserDetailsImpl) o;
+		UserDetailsImpl user = (UserDetailsImpl) o;
 		return Objects.equals(username, user.username);
 	}
 

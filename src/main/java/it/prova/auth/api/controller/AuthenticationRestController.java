@@ -11,12 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.prova.auth.dto.JwtUserDetailsImpl;
+import it.prova.auth.dto.UserDetailsImpl;
 import it.prova.auth.security.jwt.JwtAuthenticationRequest;
 import it.prova.auth.security.jwt.JwtAuthenticationResponse;
 import it.prova.auth.security.jwt.JwtTokenUtil;
@@ -47,9 +48,11 @@ public class AuthenticationRestController {
 		String jwt = jwtUtils.generateJwtToken(authentication);
 		
 		//estraggo le info dal principal
-		JwtUserDetailsImpl userDetails = (JwtUserDetailsImpl) authentication.getPrincipal();		
+		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();	
+		
 		List<String> roles = userDetails.getAuthorities().stream()
-				.map(item -> item.getAuthority())
+				.map(GrantedAuthority::getAuthority)
+//				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
 
 		return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, 
